@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
                   double ind_times = 0;
                   double sdev = 0;
 
-                  // repeat 1000 times so can take an average
+                  // repeat 1000 (sample) times so can take an average
                   for (int loops = 0; loops < samples; loops++)
                   {
                         counter = 0;
@@ -59,8 +59,8 @@ int main(int argc, char *argv[])
                         pthread_2d_multiply_sequence(nthreads, N);
 
                         stop = omp_get_wtime(); // take stop time
-                                                // Displaying the result matrix
-                                                // print_2D_matrix(C, N) ;
+
+                        // print_2D_matrix(C, N) ;
                         ind_times = time_for_round(start, stop);
                         total_time = total_time + ind_times;
                         time_data[loops] = ind_times;
@@ -101,7 +101,7 @@ void print_2D_matrix(int matrix[max_dimensions][max_dimensions], int N)
 
 void initialise_matrices(int N)
 {
-      if (N <=0)
+      if (N <= 0)
       {
             printf("Invalid size of Matrix");
             fprintf(stderr, "Requested a matrix with invalid size! Exiting...\n");
@@ -155,7 +155,7 @@ void pthread_2d_multiply_sequence(int nthreads, int N)
             pthread_create(&threads[i], NULL, rank2pthread_row, (void *)(&N));
       }
 
-      // joining and waiting for all remander threads to complete
+      // joining and waiting for all remainder threads to complete
       for (int i = 0; i < loopNum2; i++)
       {
             pthread_join(threads[i], NULL);

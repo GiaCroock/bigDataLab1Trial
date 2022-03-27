@@ -27,10 +27,14 @@ int main(int argc, char *argv[])
 
             for (int thread_request = 8; thread_request >= 2; thread_request = thread_request / 2)
             {
+
+                  // the lines below can be used to specify the dimensions and the
+                  // thread number from the terminal if the above for loops are removed
                   /* char *a = argv[1];
                    int N = atoi(a);
                    char *b = argv[2];
                    int nthreads = atoi(b);*/
+
                   counter = 0;
                   double total_time = 0;
                   int N = dimension; // overwrite
@@ -50,7 +54,7 @@ int main(int argc, char *argv[])
                         counter = 0;
                         srand(time(NULL));
                         initialise_matrices(N);
-                        start = omp_get_wtime();
+                        start = omp_get_wtime(); // take start time
                         pthread_3d_multiply_sequence(nthreads, N);
                         // print_3D_matrix(C, N) ;
                         stop = omp_get_wtime(); // take stop time
@@ -60,7 +64,7 @@ int main(int argc, char *argv[])
                   }
 
                   mean = total_time / samples;
-                  mean2 = (mean / 1000.0);
+                  mean2 = (mean / 1000.0); // use unscaled version for sd
                   sdev = standard_deviation(mean2, time_data);
 
                   printf("Using Pthread, %d by %d by %d multiplication algorithm took %f milliseconds to execute on average (%d samples) with %f Standard deviation when %d threads requested \n", N, N, N, mean, samples, sdev, nthreads);
@@ -75,10 +79,10 @@ void *rank3pthread(void *arg)
 {
       int N = *((int *)arg);
       pthread_mutex_lock(&lock);
-      int i = counter++; // i denotes row number of resultant matC
+      int i = counter++; // i denotes row number of resultant matC to be calculated
       pthread_mutex_unlock(&lock);
-      for (int d = 0; d < N; d++)
-            for (int j = 0; j < N; j++)
+      for (int d = 0; d < N; d++)       // we want to calcualte row i in all sheets of matrix c
+            for (int j = 0; j < N; j++) // iterates through column to calculate the row
                   for (int k = 0; k < N; k++)
 
                         C[d][i][j] += A[d][i][k] * B[d][k][j];
