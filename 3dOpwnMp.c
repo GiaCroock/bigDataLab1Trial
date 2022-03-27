@@ -1,12 +1,15 @@
 #include "omp.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
 int N = 10; // default
 void initialise_varaiables();
 void print_3D_matrix(int matrix[N][N][N], int N);
 void initialise_matrices(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N);
 double time_for_round(double start, double stop);
 void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N, int nthreads);
+double standard_deviation(double mean, double data[1000]);
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +21,8 @@ int main(int argc, char *argv[])
 
                   double total_time = 0;
                   N = dimension; // overwrite
-                  int nthreads = thread_request;
+
+                                    int nthreads = thread_request;
                   int tid, i, j, k;
                   int A[N][N][N];
                   int B[N][N][N];
@@ -26,6 +30,11 @@ int main(int argc, char *argv[])
                   double start = 0;
                   double stop = 0;
                   int samples = 1000;
+                  double mean = 0;
+                  double mean2 = 0;
+                  double time_data[samples];
+                  double ind_times = 0;
+                  double sdev = 0;
 
                   // repeat 1000 times so can take an average
                   for (int loops = 0; loops < samples; loops++)
@@ -36,11 +45,16 @@ int main(int argc, char *argv[])
                         multiply_3D(A, B, C, N, nthreads);
                         stop = omp_get_wtime(); // take stop time
                         // print_3D_matrix( C,   N);
-                        total_time = total_time + time_for_round(start, stop);
+                        ind_times = time_for_round(start, stop);
+                        total_time = total_time + ind_times;
+                        time_data[loops] = ind_times;
                   }
                   // double mean =calculate_mean(total_time, samples);
                   // calculate_standard_deviation(data,mean,samples)
-                  printf("Using openMP, %d by %d by %d  multiplication algorithm took %f milliseconds to execute on average (%d samples) when %d threads requested \n", N, N, N, total_time / samples, samples, nthreads);
+                  mean = total_time / samples;
+                  mean2 = (mean / 1000.0);
+                  sdev = standard_deviation(mean2, time_data);
+                  printf("Using openMP, %d by %d by %d multiplication algorithm took %f milliseconds to execute on average (%d samples) with %f Standard deviation when %d threads requested \n", N, N, N, mean, samples, sdev, nthreads);
             }
             printf("\n");
       }
@@ -109,4 +123,16 @@ void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N, int nthr
                   }
             }
       }
+}
+
+double standard_deviation(double mean, double data[1000])
+{
+      double sdev = 0;
+      int samples = 1000;
+      for (int loops = 0; loops < samples; loops++)
+      {
+            sdev += sqrtf(pow((data[loops] - mean), 2));
+            sdev = sdev / samples;
+      }
+      return sdev;
 }
