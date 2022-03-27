@@ -27,6 +27,12 @@ int main(int argc, char *argv[])
 
             for (int thread_request = 8; thread_request >= 2; thread_request = thread_request / 2)
             {
+                   if (thread_request > 16)
+                  {
+                        printf("Should not request more threads than the computer can handle");
+                        fprintf(stderr, "Too many threads requested! Exiting...\n");
+                        exit(EXIT_FAILURE);
+                  }
 
                   // the lines below can be used to specify the dimensions and the
                   // thread number from the terminal if the above for loops are removed
@@ -96,6 +102,13 @@ double time_for_round(double start, double stop)
 
 void initialise_matrices(int N)
 {
+      
+      if (N <= 0)
+      {
+            printf("Invalid size of Matrix");
+            fprintf(stderr, "Requested a matrix with invalid size! Exiting...\n");
+            exit(EXIT_FAILURE);
+      }
       for (int i = 0; i < N; i++)
       {
             for (int j = 0; j < N; j++)

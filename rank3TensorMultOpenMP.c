@@ -17,7 +17,13 @@ int main(int argc, char *argv[])
       for (int dimension = 10; dimension <= 50; dimension = dimension + 10)
       {
             for (int thread_request = 8; thread_request >= 2; thread_request = thread_request / 2)
-            {
+            { 
+                  if (thread_request > 16)
+                  {
+                        printf("Should not request more threads than the computer can handle");
+                        fprintf(stderr, "Too many threads requested! Exiting...\n");
+                        exit(EXIT_FAILURE);
+                  }
                   double total_time = 0;
                   N = dimension; // overwrite
                   int nthreads = thread_request;
@@ -84,6 +90,13 @@ void print_3D_matrix(int matrix[N][N][N], int N)
 
 void initialise_matrices(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N)
 {
+      
+      if (N <= 0)
+      {
+            printf("Invalid size of Matrix");
+            fprintf(stderr, "Requested a matrix with invalid size! Exiting...\n");
+            exit(EXIT_FAILURE);
+      }
       for (int d = 0; d < N; d++)
       {
             for (int i = 0; i < N; i++)
