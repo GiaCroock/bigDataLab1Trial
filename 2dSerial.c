@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
       for (int dimension = 10; dimension <= 50; dimension = dimension + 10)
       {
 
-
                   double total_time = 0;
                   N = dimension; // overwrite
                   int tid, i, j, k;
@@ -23,12 +22,11 @@ int main(int argc, char *argv[])
                   int C[N][N];
                   double start = 0;
                   double stop = 0;
-                  int samples = 1;
+                  int samples = 100;
 
                   // repeat 1000 times so can take an average
                   for (int loops = 0; loops < samples; loops++)
                   {
-
                         initialise_matrices(A, B, C, N);
                         start = omp_get_wtime(); // take start time
                         multiply_2D(A, B, C, N);
@@ -45,8 +43,8 @@ int main(int argc, char *argv[])
 
                         total_time = total_time + time_for_round(start, stop);
                   }
-                  // double mean =calculate_mean(total_time, samples);
-                  // calculate_standard_deviation(data,mean,samples)
+                   double mean =calculate_mean(total_time, samples);
+                   calculate_standard_deviation(data,mean,samples)
                   printf(" %d by %d openMp multiplication algorithm took %f milliseconds to execute on average when using serial code \n", N, N, total_time / samples);
             
             printf("\n");

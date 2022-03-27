@@ -45,8 +45,8 @@ int main(int argc, char *argv[])
 
                         total_time = total_time + time_for_round(start, stop);
                   }
-                  // double mean =calculate_mean(total_time, samples);
-                  // calculate_standard_deviation(data,mean,samples)
+                   double mean =calculate_mean(total_time, samples);
+                   calculate_standard_deviation(mean,samples);
                   printf(" %d by %d by %d openMp multiplication algorithm took %f milliseconds to execute on average when using serial code \n", N, N, N, total_time / samples);
             
             printf("\n");
