@@ -1,40 +1,28 @@
 #include "omp.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-
 int N = 10; // default
 void initialise_varaiables();
 void print_3D_matrix(int matrix[N][N][N], int N);
 void initialise_matrices(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N);
 double time_for_round(double start, double stop);
-void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N, int nthreads);
-double standard_deviation(double mean, double data[1000]);
+void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N);
 
 int main(int argc, char *argv[])
 {
       // run the code with all desired combinations of threads and matrix sizes
-      for (int dimension = 10; dimension <= 50; dimension = dimension + 10)
-      {
-            for (int thread_request = 8; thread_request >= 2; thread_request = thread_request / 2)
-            {
+      for (int dimension = 4; dimension <= 6; dimension = dimension + 1)
+      {        
 
                   double total_time = 0;
                   N = dimension; // overwrite
-
-                                    int nthreads = thread_request;
                   int tid, i, j, k;
                   int A[N][N][N];
                   int B[N][N][N];
                   int C[N][N][N];
                   double start = 0;
                   double stop = 0;
-                  int samples = 1000;
-                  double mean = 0;
-                  double mean2 = 0;
-                  double time_data[samples];
-                  double ind_times = 0;
-                  double sdev = 0;
+                  int samples = 100;
 
                   // repeat 1000 times so can take an average
                   for (int loops = 0; loops < samples; loops++)
@@ -42,20 +30,25 @@ int main(int argc, char *argv[])
 
                         initialise_matrices(A, B, C, N);
                         start = omp_get_wtime(); // take start time
-                        multiply_3D(A, B, C, N, nthreads);
+                        multiply_3D(A, B, C, N);
                         stop = omp_get_wtime(); // take stop time
-                        // print_3D_matrix( C,   N);
-                        ind_times = time_for_round(start, stop);
-                        total_time = total_time + ind_times;
-                        time_data[loops] = ind_times;
+                        // print_3D_matrix
+                          if (loops == 0)
+                        {
+                              printf("A\n");
+                              print_3D_matrix(A, N);
+                              printf("B\n");
+                              print_3D_matrix(B, N);
+                              printf("C\n");
+                              print_3D_matrix(C, N);
+                        }
+
+                        total_time = total_time + time_for_round(start, stop);
                   }
                   // double mean =calculate_mean(total_time, samples);
                   // calculate_standard_deviation(data,mean,samples)
-                  mean = total_time / samples;
-                  mean2 = (mean / 1000.0);
-                  sdev = standard_deviation(mean2, time_data);
-                  printf("Using openMP, %d by %d by %d multiplication algorithm took %f milliseconds to execute on average (%d samples) with %f Standard deviation when %d threads requested \n", N, N, N, mean, samples, sdev, nthreads);
-            }
+                  printf(" %d by %d by %d openMp multiplication algorithm took %f milliseconds to execute on average when using serial code \n", N, N, N, total_time / samples);
+            
             printf("\n");
       }
       return 0;
@@ -101,21 +94,15 @@ void initialise_matrices(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N)
       }
 }
 
-void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N, int nthreads)
+void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N)
 {
       int tid, i, j, k, d;
-
+      {
 // combines the total number of iterations in the two loops below and devide them by the total number of threads allocated by the enviroment
-
-          #pragma omp parallel shared(A, B, C) private(d, j, k, i) num_threads(nthreads)
-              {
-            #pragma omp for schedule (dynamic)
-                  for (i = 0; i < N; i++) // divide rows amongst threads
-                  {   
-      
-            for ( d = 0; d < N; d++) // for all sheets
-            
+            for (d = 0; d < N; d++)
             {
+                  for (i = 0; i < N; i++) // for all the rows
+                  {
                         for (j = 0; j < N; j++) // for all the columns
 
                         {
@@ -127,16 +114,4 @@ void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N, int nthr
                   }
             }
       }
-}
-
-double standard_deviation(double mean, double data[1000])
-{
-      double sdev = 0;
-      int samples = 1000;
-      for (int loops = 0; loops < samples; loops++)
-      {
-            sdev += sqrtf(pow((data[loops] - mean), 2));
-            sdev = sdev / samples;
-      }
-      return sdev;
 }
