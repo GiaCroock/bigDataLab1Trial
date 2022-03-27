@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
       // run the code with all desired combinations of threads and matrix sizes
       for (int dimension = 10; dimension <= 50; dimension = dimension + 10)
       {
-            for (int thread_request = 8; thread_request >= 2; thread_request = thread_request / 2)
+            for (int thread_request = 16; thread_request >= 2; thread_request = thread_request / 2)
             {
 
                   double total_time = 0;
@@ -99,7 +99,7 @@ void multiply_2D(int A[N][N], int B[N][N], int C[N][N], int N, int nthreads)
 #pragma omp parallel shared(A, B, C) private(i, j, k) num_threads(nthreads)
       {
 // combines the total number of iterations in the two loops below and devide them by the total number of threads allocated by the enviroment
-#pragma omp for collapse(2)
+#pragma omp for schedule(static)
 
             for (i = 0; i < N; i++) // for all the rows
             {

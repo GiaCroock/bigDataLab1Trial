@@ -107,15 +107,15 @@ void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N, int nthr
 
 // combines the total number of iterations in the two loops below and devide them by the total number of threads allocated by the enviroment
 
-            for ( d = 0; d < N; d++)
+          #pragma omp parallel shared(A, B, C) private(d, j, k, i) num_threads(nthreads)
+              {
+            #pragma omp for schedule (dynamic)
+                  for (i = 0; i < N; i++) // divide rows amongst threads
+                  {   
+      
+            for ( d = 0; d < N; d++) // for all sheets
             
             {
-       #pragma omp parallel shared(A, B, C) private(i, j, k) num_threads(nthreads)
-              {
-            #pragma omp for schedule (static)
-            
-                  for (i = 0; i < N; i++) // for all the rows
-                  {
                         for (j = 0; j < N; j++) // for all the columns
 
                         {
