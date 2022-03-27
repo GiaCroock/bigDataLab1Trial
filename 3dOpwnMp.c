@@ -90,12 +90,16 @@ void initialise_matrices(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N)
 void multiply_3D(int A[N][N][N], int B[N][N][N], int C[N][N][N], int N, int nthreads)
 {
       int tid, i, j, k, d;
-#pragma omp parallel shared(A, B, C) private(i, j, k, d) num_threads(nthreads)
-      {
+
 // combines the total number of iterations in the two loops below and devide them by the total number of threads allocated by the enviroment
-#pragma omp for collapse(3)
-            for (d = 0; d < N; d++)
+
+            for ( d = 0; d < N; d++)
+            
             {
+       #pragma omp parallel shared(A, B, C) private(i, j, k) num_threads(nthreads)
+              {
+            #pragma omp for schedule (static)
+            
                   for (i = 0; i < N; i++) // for all the rows
                   {
                         for (j = 0; j < N; j++) // for all the columns
