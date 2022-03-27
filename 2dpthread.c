@@ -19,7 +19,7 @@ void initialise_matrices(int N);
 void print_2D_matrix(int matrix[max_dimensions][max_dimensions], int N);
 double time_for_round(double start, double stop);
 void pthread_2d_multiply_sequence(int nthreads, int N);
-double standard_deviation(double mean, double data[1000]) ;
+double standard_deviation(double mean, double data[1000]);
 
 int main(int argc, char *argv[])
 {
@@ -29,6 +29,12 @@ int main(int argc, char *argv[])
 
             for (int thread_request = 8; thread_request >= 2; thread_request = thread_request / 2)
             {
+                  if (thread_request > 16)
+                  {
+                        printf("Should not request more threads than the computer can handle");
+                        fprintf(stderr, "Too many threads requested! Exiting...\n");
+                        exit(EXIT_FAILURE);
+                  }
                   counter = 0;
                   double total_time = 0;
                   int N = dimension; // this is the dimensions of the matrix for the round
@@ -39,8 +45,8 @@ int main(int argc, char *argv[])
                   double mean = 0;
                   double time_data[samples];
                   double ind_times = 0;
-                  double sdev=0;
-                  
+                  double sdev = 0;
+
                   // repeat 1000 times so can take an average
                   for (int loops = 0; loops < samples; loops++)
                   {
@@ -53,15 +59,15 @@ int main(int argc, char *argv[])
                         pthread_2d_multiply_sequence(nthreads, N);
 
                         stop = omp_get_wtime(); // take stop time
-            // Displaying the result matrix
+                                                // Displaying the result matrix
                                                 // print_2D_matrix(C, N) ;
                         ind_times = time_for_round(start, stop);
                         total_time = total_time + ind_times;
                         time_data[loops] = ind_times;
                   }
                   mean = total_time / samples;
-                  sdev=standard_deviation(mean, time_data);
-                  
+                  sdev = standard_deviation(mean, time_data);
+
                   printf("Using Pthread, %d by %d  multiplication algorithm took %f milliseconds to execute on average (%d samples) with %f Standard deviation when %d threads requested \n", N, N, mean, samples, sdev, nthreads);
             }
             printf("\n");
@@ -69,10 +75,6 @@ int main(int argc, char *argv[])
 
       return 0;
 }
-
-
-
-
 
 double time_for_round(double start, double stop)
 {
@@ -99,6 +101,12 @@ void print_2D_matrix(int matrix[max_dimensions][max_dimensions], int N)
 
 void initialise_matrices(int N)
 {
+      if (N <=0)
+      {
+            printf("Invalid size of Matrix")
+            fprintf(stderr, "Requested a matrix with invalid size! Exiting...\n");
+            exit(EXIT_FAILURE);
+      }
       for (int i = 0; i < N; i++)
             for (int k = 0; k < N; k++)
             {
@@ -153,14 +161,14 @@ void pthread_2d_multiply_sequence(int nthreads, int N)
             pthread_join(threads[i], NULL);
       }
 }
-double standard_deviation(double mean, double data[1000]) 
-{double sdev = 0;
-int samples =1000;
-for (int loops = 0; loops < samples; loops++)
-                  {
-                        sdev += sqrtf(pow((data[loops] - mean), 2));
-                        sdev = sdev / samples;
-                        
-                  }
-  return sdev;                
+double standard_deviation(double mean, double data[1000])
+{
+      double sdev = 0;
+      int samples = 1000;
+      for (int loops = 0; loops < samples; loops++)
+      {
+            sdev += sqrtf(pow((data[loops] - mean), 2));
+            sdev = sdev / samples;
+      }
+      return sdev;
 }
