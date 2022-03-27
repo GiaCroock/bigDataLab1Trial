@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
       for (int dimension = 10; dimension <= 50; dimension = dimension + 10)
       {
 
-            for (int thread_request = 8; thread_request >= 2; thread_request = thread_request / 2)
+            for (int thread_request = 8; thread_request >= 1; thread_request = thread_request / 2)
             {
                   if (thread_request > 16)
                   {
@@ -103,7 +103,7 @@ void initialise_matrices(int N)
 {
       if (N <=0)
       {
-            printf("Invalid size of Matrix")
+            printf("Invalid size of Matrix");
             fprintf(stderr, "Requested a matrix with invalid size! Exiting...\n");
             exit(EXIT_FAILURE);
       }
