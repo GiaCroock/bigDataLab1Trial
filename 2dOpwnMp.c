@@ -99,7 +99,7 @@ void multiply_2D(int A[N][N], int B[N][N], int C[N][N], int N, int nthreads)
 #pragma omp parallel shared(A, B, C) private(i, j, k) num_threads(nthreads)
       {
 // combines the total number of iterations in the two loops below and devide them by the total number of threads allocated by the enviroment
-#pragma omp for schedule(static)
+#pragma omp for schedule(dynamic)
 
             for (i = 0; i < N; i++) // for all the rows
             {

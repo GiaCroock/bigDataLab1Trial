@@ -11,7 +11,7 @@ void multiply_2D(int A[N][N], int B[N][N], int C[N][N], int N);
 int main(int argc, char *argv[])
 {
       // run the code with all desired combinations of threads and matrix sizes
-      for (int dimension = 4; dimension <= 6; dimension = dimension + 1)
+      for (int dimension = 10; dimension <= 50; dimension = dimension + 10)
       {
 
 
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
                         start = omp_get_wtime(); // take start time
                         multiply_2D(A, B, C, N);
                         stop = omp_get_wtime(); // take stop time
-                        if (loops == 0)
+                        /*if (loops == 0)
                         {
                               printf("A\n");
                               print_2D_matrix(A, N);
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
                               print_2D_matrix(B, N);
                               printf("C\n");
                               print_2D_matrix(C, N);
-                        }
+                        }*/
 
                         total_time = total_time + time_for_round(start, stop);
                   }
