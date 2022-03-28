@@ -142,7 +142,9 @@ void pthread_3d_multiply_sequence(int nthreads, int N)
             for (int i = 0; i < nthreads; i++)
             {
                   if(pthread_join(threads[i], NULL)!=0){
+
                         printf(printf("The joining of threads failed"));
+
                   }
             }
       }
