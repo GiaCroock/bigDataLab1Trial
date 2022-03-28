@@ -133,13 +133,17 @@ void pthread_3d_multiply_sequence(int nthreads, int N)
       {
             for (int i = 0; i < nthreads; i++)
             {
-                  pthread_create(&threads[i], NULL, rank3pthread, (void *)&N);
+                 if( pthread_create(&threads[i], NULL, rank3pthread, (void *)&N)!=0){
+                       printf("The creation of the thread failed");
+                 }
             }
 
             // joining and waiting for all threads to complete
             for (int i = 0; i < nthreads; i++)
             {
-                  pthread_join(threads[i], NULL);
+                  if(pthread_join(threads[i], NULL)!=0){
+                        printf(printf("The joining of threads failed"));
+                  }
             }
       }
 
